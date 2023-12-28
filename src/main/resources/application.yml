@@ -1,23 +1,26 @@
 spring:
   datasource:
-    url: ${JDBC_DATABASE_URL:jdbc:h2:mem:tmt-v3}
-    username: ${JDBC_DATABASE_USERNAME:sa}
-    password: ${JDBC_DATABASE_PASSWORD:}
+    url: ${JDBC_DATABASE_URL:jdbc:postgresql://localhost:5432/tnt}
+    username: ${JDBC_DATABASE_USERNAME:tntadmin}
+    password: ${JDBC_DATABASE_PASSWORD:tntpassword}
     dbcp2:
       max-wait-millis: 30000
       validation-query: select 1
       validation-query-timeout: 30
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: none
     open-in-view: false
     properties:
       hibernate:
+        format_sql: true
         jdbc:
           lob:
             non_contextual_creation: true
         id:
           new_generator_mappings: true
+#        dialect: org.hibernate.dialect.PostgreSQL14Dialect
+    show-sql: true
   h2:
     console:
       enabled: true

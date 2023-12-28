@@ -1,0 +1,9 @@
+CREATE DATABASE TNT;
+create user tntadmin with encrypted password 'tntpassword';
+grant all privileges on database tnt to tntadmin;
+
+-- to list databases
+\l
+
+-- to list users
+\du
