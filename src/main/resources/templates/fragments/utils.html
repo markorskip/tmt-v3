@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <body>
+        <form th:fragment="searchFilter(object)" th:action="${requestUri}" method="get" class="col-md-6 col-lg-4">
+            <div class="input-group mb-3">
+                <input type="text" name="filter" th:value="${filter == null ? '' : filter}" th:placeholder="#{__${object}__.list.filter}" class="form-control">
+                <button type="submit" class="btn btn-secondary">[[#{searchFilter.apply}]]</button>
+            </div>
+        </form>
+    </body>
+</html>

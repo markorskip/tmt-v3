@@ -1,0 +1,59 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{layout}">
+    <head>
+        <title>[[#{task.list.headline}]]</title>
+    </head>
+    <body>
+        <div layout:fragment="content">
+            <div class="d-flex flex-wrap mb-4">
+                <h1 class="flex-grow-1">[[#{task.list.headline}]]</h1>
+                <div>
+                    <a th:href="@{/tasks/add}" class="btn btn-primary ms-2">[[#{task.list.createNew}]]</a>
+                </div>
+            </div>
+            <div th:if="${!tasks.empty || filter != null}" class="row">
+                <div th:replace="~{fragments/utils::searchFilter(object='task')}" />
+            </div>
+            <div th:if="${tasks.empty}">[[#{task.list.empty}]]</div>
+            <div th:if="${!tasks.empty}" class="table-responsive">
+                <table class="table table-striped table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th scope="col">[[#{task.id.label}]]</th>
+                            <th scope="col">[[#{task.name.label}]]</th>
+                            <th scope="col">[[#{task.cost.label}]]</th>
+                            <th scope="col">[[#{task.time.label}]]</th>
+                            <th scope="col">[[#{task.dateCompleted.label}]]</th>
+                            <th scope="col">[[#{task.completedBy.label}]]</th>
+                            <th scope="col">[[#{task.project.label}]]</th>
+                            <th scope="col">[[#{task.parentTask.label}]]</th>
+                            <th><!-- --></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="task : ${tasks}">
+                            <td>[[${task.id}]]</td>
+                            <td>[[${task.name}]]</td>
+                            <td>[[${task.cost}]]</td>
+                            <td>[[${task.time}]]</td>
+                            <td>[[${task.dateCompleted}]]</td>
+                            <td>[[${task.completedBy}]]</td>
+                            <td>[[${task.project}]]</td>
+                            <td>[[${task.parentTask}]]</td>
+                            <td>
+                                <div class="float-end text-nowrap">
+                                    <a th:href="@{/tasks/edit/{id}(id=${task.id})}" class="btn btn-sm btn-secondary">[[#{task.list.edit}]]</a>
+                                    <form th:action="@{/tasks/delete/{id}(id=${task.id})}"
+                                            th:hx-confirm="#{delete.confirm}" method="post" class="d-inline">
+                                        <button type="submit" class="btn btn-sm btn-secondary">[[#{task.list.delete}]]</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </body>
+</html>
