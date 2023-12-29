@@ -38,5 +38,5 @@ public class TaskDTO {
 
     private Long parentTask;
 
-    private List<Task> tasks;
+    private List<TaskDTO> tasks;
 }

@@ -6,6 +6,7 @@ import io.efficientsoftware.tmt_v3.util.NotFoundException;
 import io.efficientsoftware.tmt_v3.util.WebUtils;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.parameters.P;
@@ -99,6 +100,7 @@ public class TaskService {
         taskDTO.setCompletedBy(task.getCompletedBy());
         taskDTO.setProject(task.getProject() == null ? null : task.getProject().getId());
         taskDTO.setParentTask(task.getParentTask() == null ? null : task.getParentTask().getId());
+        taskDTO.setTasks(task.getTasks().stream().map(t->mapToDTO(t,new TaskDTO())).collect(Collectors.toList()));
         return taskDTO;
     }
 
