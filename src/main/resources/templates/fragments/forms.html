@@ -48,35 +48,13 @@
         </div>
 
         <div th:fragment="renderTask(task, depth) ">
-            <tr>
-                <td>[[${task.name}]]</td>
-                <td>[[${task.cost}]]</td>
-                <td>[[${task.time}]]</td>
-                <td>[[${task.dateCompleted}]]</td>
-                <td>[[${task.completedBy}]]</td>
-                <td>[[${task.project}]]</td>
-                <td>[[${task.parentTask}]]</td>
-                <td>[[${depth}]]</td>
-
-
-<!--                <td>-->
-<!--                    <div class="float-end text-nowrap">-->
-<!--                        <a th:href="@{/tasks/edit/{id}(id=${task.id})}" class="btn btn-sm btn-secondary">[[#{task.list.edit}]]</a>-->
-<!--                        <form th:action="@{/tasks/delete/{id}(id=${task.id})}"-->
-<!--                              th:hx-confirm="#{delete.confirm}" method="post" class="d-inline">-->
-<!--                            <button type="submit" class="btn btn-sm btn-secondary">[[#{task.list.delete}]]</button>-->
-<!--                        </form>-->
-<!--                    </div>-->
-<!--                </td>-->
-            </tr>
+            [[${task.name}]]
             <div th:if="${not #lists.isEmpty(task.tasks)}">
-                 <div th:each="task : ${task.tasks}">
+                <div th:each="task : ${task.tasks}">
                     <div th:insert="~{fragments/forms:: renderTask (task=${task}, depth=${depth+1})}"/>
                 </div>
             </div>
-
         </div>
-
 
         <span th:fragment="requiredStar(object, field)" th:with="required=${required}"
                 th:if="${required == null ? T(io.efficientsoftware.tmt_v3.util.WebUtils).isRequiredField(__${object}__, field) : required}">*</span>

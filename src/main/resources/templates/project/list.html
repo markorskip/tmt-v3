@@ -14,7 +14,7 @@
             </div>
             <div th:if="${projects.empty}">[[#{project.list.empty}]]</div>
             <div th:if="${!projects.empty}" class="table-responsive">
-                <div th:each="project : ${projects}" class="card">
+                <div th:each="project : ${projects}" class="card p-3 m-3">
                     <div class="card-body">
                         <h5 class="card-title">[[${project.name}]]</h5>
                         <p class="card-text">[[${project.description}]]</p>
