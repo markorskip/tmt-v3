@@ -4,6 +4,8 @@ import io.efficientsoftware.tmt_v3.project.Project;
 import io.efficientsoftware.tmt_v3.project.ProjectRepository;
 import io.efficientsoftware.tmt_v3.util.NotFoundException;
 import io.efficientsoftware.tmt_v3.util.WebUtils;
+
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -94,8 +96,8 @@ public class TaskService {
         taskDTO.setName(task.getName());
       //  taskDTO.setCost(task.getComputedCost());
       //  taskDTO.setTime(task.getComputedTime());
-        taskDTO.setCost(task.getCost());
-        taskDTO.setTime(task.getTime());
+        taskDTO.setCost(task.getCost() != null ? task.getCost() : new BigDecimal(0.0));
+        taskDTO.setTime(task.getTime() != null ? task.getTime() : new BigDecimal(0.0));
         taskDTO.setDateCompleted(task.getDateCompleted());
         taskDTO.setCompletedBy(task.getCompletedBy());
         taskDTO.setProject(task.getProject() == null ? null : task.getProject().getId());

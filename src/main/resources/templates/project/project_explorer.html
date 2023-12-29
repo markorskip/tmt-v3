@@ -8,20 +8,18 @@
     Project Explorer
         <div layout:fragment="content">
             <div class="d-flex flex-wrap mb-4">
-                <h1 class="flex-grow-1">[[#{project.explorer.headline}]]</h1>
+                <h1 class="flex-grow-1">[[${project.name}]]</h1>
+            </div>
+            <div class="d-flex flex-wrap mb-4">
+                <h6 class="flex-grow-1">Description: [[${project.description}]]</h6>
             </div>
             <div th:replace="~{fragments/forms::globalErrors('project')}" />
             <div th:if="${project.tasks.empty}">[[#{task.list.empty}]]</div>
-            <div th:if="${!project.tasks.empty}" class="table-responsive">
-                <div class="just-padding">
 
-                    <div class="list-group list-group-root well">
-                        <div th:each="task : ${project.tasks}">
-                            <div th:insert="~{fragments/forms:: renderTask (task=${task},depth=0)}"/>
-                        </div>
-                    </div>
-                </div>
+            <div th:if="${!project.tasks.empty}" class="container">
+                <div th:each="task : ${project.tasks}" th:insert="~{fragments/forms:: renderTask (task=${task},depth=0)}"></div>
             </div>
+
         </div>
     </body>
 </html>

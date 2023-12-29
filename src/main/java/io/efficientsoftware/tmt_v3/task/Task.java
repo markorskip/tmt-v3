@@ -45,10 +45,10 @@ public class Task {
     private String name;
 
     @Column(precision = 10, scale = 2)
-    private BigDecimal cost = new BigDecimal(0);
+    private BigDecimal cost;
 
     @Column(precision = 10, scale = 2)
-    private BigDecimal time = new BigDecimal(0);
+    private BigDecimal time;
 
     @Column
     private LocalDateTime dateCompleted;
