@@ -5,7 +5,10 @@ import io.efficientsoftware.tmt_v3.project.ProjectRepository;
 import io.efficientsoftware.tmt_v3.util.NotFoundException;
 import io.efficientsoftware.tmt_v3.util.WebUtils;
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 
@@ -52,7 +55,21 @@ public class TaskService {
     public Long create(final TaskDTO taskDTO) {
         final Task task = new Task();
         mapToEntity(taskDTO, task);
-        return taskRepository.save(task).getId();
+
+        // Since every task is part of a list somewhere, we need to update the parent with the new task so it can keep track of the
+        // list.
+        // Either a project is parent or a task - not both
+        if (taskDTO.getParentTask() != null) {
+            Task parentTask = taskRepository.findById(taskDTO.getParentTask()).get();
+            parentTask.getTasks().add(task);
+            taskRepository.save(parentTask);
+        } else {
+            Project project = projectRepository.findById(task.getProject().getId()).get();
+            project.getTasks().add(task);
+            projectRepository.save(project);
+        }
+
+        return 1L;
     }
 
     public void update(final Long id, final TaskDTO taskDTO) {
@@ -63,8 +80,12 @@ public class TaskService {
     }
 
     public void delete(final Long id) {
-        taskRepository.deleteById(id);
-        System.out.println("Deleted id: " + id);
+        Task task = taskRepository.findById(id).get();
+        task.setParentTask(null);
+        task.setProject(null);
+        taskRepository.save(task);
+        taskRepository.deleteById(task.getId());
+        System.out.println("Deleted id: " + task.getId());
     }
 
     public TaskDTO mapToDTO(final Task task, final TaskDTO taskDTO) {

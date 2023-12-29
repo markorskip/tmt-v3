@@ -1,5 +1,6 @@
 package io.efficientsoftware.tmt_v3.task;
 
+import groovyjarjarantlr4.v4.runtime.misc.NotNull;
 import io.efficientsoftware.tmt_v3.project.Project;
 import jakarta.persistence.*;
 
@@ -8,9 +9,12 @@ import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -21,6 +25,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EntityListeners(AuditingEntityListener.class)
 @Getter
 @Setter
+@ToString
 public class Task {
 
     @Id
@@ -53,10 +58,11 @@ public class Task {
     private String completedBy;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "project_id", nullable = false)
+    @JoinColumn(name = "project_id")
     private Project project;
 
     @OneToMany(mappedBy = "parentTask", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OrderColumn(name = "order_id")
     private List<Task> tasks = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -91,6 +97,5 @@ public class Task {
         });
         return result;
     }
-
 
 }

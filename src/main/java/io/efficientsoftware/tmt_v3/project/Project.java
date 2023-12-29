@@ -3,22 +3,14 @@ package io.efficientsoftware.tmt_v3.project;
 import io.efficientsoftware.tmt_v3.note.Note;
 import io.efficientsoftware.tmt_v3.task.Task;
 import io.efficientsoftware.tmt_v3.user.User;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.SequenceGenerator;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
@@ -53,7 +45,8 @@ public class Project {
     @Column(length = 5000)
     private String description;
 
-    @OneToMany(mappedBy = "project")
+    @OneToMany(mappedBy = "project", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OrderColumn(name = "order_id")
     private List<Task> tasks;
 
     @ManyToOne(fetch = FetchType.LAZY)

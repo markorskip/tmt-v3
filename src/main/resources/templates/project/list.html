@@ -17,18 +17,18 @@
                 <table class="table table-striped table-hover align-middle">
                     <thead>
                         <tr>
-                            <th scope="col">[[#{project.id.label}]]</th>
+<!--                            <th scope="col">[[#{project.id.label}]]</th>-->
                             <th scope="col">[[#{project.name.label}]]</th>
                             <th scope="col">[[#{project.description.label}]]</th>
                             <th scope="col">[[#{project.owner.label}]]</th>
-                            <th scope="col">[[#{project.tasks}]]</th>
                             <th><!-- --></th>
                         </tr>
                     </thead>
                     <tbody>
+
                         <tr th:each="project : ${projects}">
-                            <td>[[${project.id}]]</td>
-                            <td>[[${project.name}]]</td>
+<!--                            <td>[[${project.id}]]</td>-->
+                            <td><a th:href="@{/projects/{id}(id=${project.id})}">[[${project.name}]]</a></td>
                             <td>[[${project.description}]]</td>
                             <td>[[${project.owner}]]</td>
                             <td>
@@ -41,6 +41,7 @@
                                 </div>
                             </td>
                         </tr>
+
                     </tbody>
                 </table>
             </div>

@@ -34,11 +34,9 @@ public class TaskDTO {
     @Size(max = 255)
     private String completedBy;
 
-    @NotNull
     private Long project;
 
     private Long parentTask;
 
     private List<Task> tasks;
-
 }
