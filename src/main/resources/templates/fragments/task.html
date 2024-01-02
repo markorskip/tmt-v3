@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Task Fragment</title>
+</head>
+<body>
+
+<form th:fragment="rendertitleEditForm(task)" th:hx-post="@{/tasks/${task.id}}" hx-target="this" hx-swap="outerHTML">
+    <div>
+        <label>Name</label>
+        <input type="text" name="name" th:value="${task.name}">
+    </div>
+    <button class="btn">Submit</button>
+<!--    <button class="btn" th:hx-get="@{/tasks/1">Cancel</button>-->
+</form>
+
+<div th:fragment="renderTask(task, depth, projId) ">
+  <div class="row">
+    <div th:class="${#strings.concat('col-sm-',depth)}">
+    </div>
+
+    <div class="col">
+      <div class="card" >
+        <div class="card-body">
+            <h5 class="card-title" hx-target="this" hx-swap="outerHTML">
+                <div><label>Title</label>[[${task.name}]]</div>
+                <button th:hx-get="@{/tasks/{id}/edittitle(id=${task.id})}" class="btn btn-primary">
+                    Click To Edit
+                </button>
+            </h5>
+          <p class="card-text">
+             Cost: [[${task.cost}]]  Time: [[${task.time}]]
+          </p>
+            <form th:action="@{/tasks/addNewTask(projectId=${projId},taskId=${task.id})}"
+                   method="post" class="d-inline">
+                <button type="submit" class="btn btn-sm btn-secondary">Add SubTask</button>
+            </form>
+            <form th:action="@{/tasks/delete(projectId=${projId},taskId=${task.id})}"
+                  th:hx-confirm="#{delete.confirm}" method="post" class="d-inline">
+                <button type="submit" class="btn btn-sm btn-secondary">[[#{task.list.delete}]]</button>
+            </form>
+
+        </div>
+      </div>
+    </div>
+
+    <div th:class="${#strings.concat('col-sm-', 5 - depth)}">
+    </div>
+  </div>
+  <div th:if="${not #lists.isEmpty(task.tasks)}">
+      <div th:each="task : ${task.tasks}">
+          <div th:replace="~{fragments/task:: renderTask (task=${task}, depth=${depth+1}, projId=${projId} )}"/>
+      </div>
+  </div>
+</div>
+
+<button  th:hx-get="@{/tasks/addNewTask(projectId=${projId},taskId=${task.id})}"
+        hx-target="this"
+        hx-swap="outerHTML"
+        type="submit" class="btn btn-sm btn-secondary">Add SubTask</button>
+
+</body>
+</html>

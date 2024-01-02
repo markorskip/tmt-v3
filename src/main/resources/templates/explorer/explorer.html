@@ -17,7 +17,7 @@
             <div th:if="${project.tasks.empty}">[[#{task.list.empty}]]</div>
 
             <div th:if="${!project.tasks.empty}" class="container">
-                <div th:each="task : ${project.tasks}" th:insert="~{fragments/forms:: renderTask (task=${task},depth=0)}"></div>
+                <div th:each="task : ${project.tasks}" th:insert="~{fragments/task:: renderTask (task=${task},depth=0,projId=${project.id})}"></div>
             </div>
 
         </div>

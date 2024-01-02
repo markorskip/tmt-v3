@@ -5,6 +5,7 @@ import io.efficientsoftware.tmt_v3.project.Project;
 import io.efficientsoftware.tmt_v3.project.ProjectRepository;
 import io.efficientsoftware.tmt_v3.util.CustomCollectors;
 import io.efficientsoftware.tmt_v3.util.WebUtils;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,6 +19,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.Optional;
 
 
 @Controller
@@ -58,7 +61,6 @@ public class TaskController {
     public String add(@ModelAttribute("task") final TaskDTO taskDTO) {
         return "task/add";
     }
-
     @PostMapping("/add")
     public String add(@ModelAttribute("task") @Valid final TaskDTO taskDTO,
             final BindingResult bindingResult, final RedirectAttributes redirectAttributes) {
@@ -68,6 +70,32 @@ public class TaskController {
         taskService.create(taskDTO);
         redirectAttributes.addFlashAttribute(WebUtils.MSG_SUCCESS, WebUtils.getMessage("task.create.success"));
         return "redirect:/tasks";
+    }
+
+    @GetMapping(headers = "HX-Request", path = "/{id}/edittitle")
+    public String edittitle(Model model,
+                            HttpServletResponse response,
+                            @PathVariable(name = "id") final Long id) {
+        model.addAttribute("task", taskService.get(id));
+        response.setHeader("HX-Trigger", "itemAdded");
+        return "fragments/task :: rendertitleEditForm";
+    }
+
+    @PostMapping("/addNewTask")
+    public String addEmptyTask(@RequestParam Long projectId, @RequestParam Long taskId) {
+        TaskDTO taskDTO = new TaskDTO();
+        taskDTO.setName("New Task");
+        System.out.println("IDS");
+        System.out.println(projectId);
+        System.out.println(taskId);
+        if (taskId != null) {
+            taskDTO.setParentTask(taskId);
+        } else if (projectId != null) {
+            taskDTO.setProject(projectId);
+        }
+        System.out.println(taskDTO);
+        taskService.create(taskDTO);
+        return "redirect:/projects/"+projectId;
     }
 
     @GetMapping("/edit/{id}")
@@ -99,6 +127,22 @@ public class TaskController {
             redirectAttributes.addFlashAttribute(WebUtils.MSG_INFO, WebUtils.getMessage("task.delete.success"));
         }
         return "redirect:/tasks";
+
     }
+
+    @PostMapping("/delete")
+    public String deleteFromExplorer(@RequestParam Long projectId, @RequestParam Long taskId,
+                         final RedirectAttributes redirectAttributes) {
+        // TODO display referenced warnings on explorer
+        final String referencedWarning = taskService.getReferencedWarning(taskId);
+        if (referencedWarning != null) {
+            redirectAttributes.addFlashAttribute(WebUtils.MSG_ERROR, referencedWarning);
+        } else {
+            taskService.delete(taskId);
+            redirectAttributes.addFlashAttribute(WebUtils.MSG_INFO, WebUtils.getMessage("task.delete.success"));
+        }
+        return "redirect:/projects/"+projectId;
+    }
+
 
 }

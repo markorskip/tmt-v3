@@ -39,4 +39,12 @@ public class TaskDTO {
     private Long parentTask;
 
     private List<TaskDTO> tasks;
+
+    @Digits(integer = 10, fraction = 2)
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private BigDecimal computedCost;
+
+    @Digits(integer = 10, fraction = 2)
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private BigDecimal computedTime;
 }

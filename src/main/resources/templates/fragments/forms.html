@@ -47,32 +47,8 @@
             </div>
         </div>
 
-        <div th:fragment="renderTask(task, depth) ">
-            <div class="row mb-3 border rounded">
-                <div class="col">
-                    [[${task.name}]]
-                </div>
-                <div class="col">
-                    Cost: [[${task.cost}]]
-                </div>
-                <div class="col">
-                   Time: [[${task.time}]]
-                </div>
-                <div class="col-auto">
-                    <button class="btn btn-outline-secondary btn-secondary" type="button">Edit</button>
-                    <button class="btn btn-outline-secondary btn-danger" type="button">Delete</button>
-                    <button class="btn btn-outline-secondary btn-primary " type="button">Add Child Task</button>
-                    <button class="btn btn-outline-secondary btn-dark" type="button">Collapse</button>
-                </div>
-            </div>
 
 
-            <div th:if="${not #lists.isEmpty(task.tasks)}">
-                <div th:each="task : ${task.tasks}">
-                    <div th:replace="~{fragments/forms:: renderTask (task=${task}, depth=${depth+1})}"/>
-                </div>
-            </div>
-        </div>
 
         <span th:fragment="requiredStar(object, field)" th:with="required=${required}"
                 th:if="${required == null ? T(io.efficientsoftware.tmt_v3.util.WebUtils).isRequiredField(__${object}__, field) : required}">*</span>

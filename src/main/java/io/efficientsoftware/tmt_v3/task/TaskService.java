@@ -66,13 +66,14 @@ public class TaskService {
             Task parentTask = taskRepository.findById(taskDTO.getParentTask()).get();
             parentTask.getTasks().add(task);
             taskRepository.save(parentTask);
-        } else {
+            return parentTask.getTasks().get(parentTask.getTasks().size()-1).getId();
+        } else if (taskDTO.getProject() != null){
             Project project = projectRepository.findById(task.getProject().getId()).get();
             project.getTasks().add(task);
             projectRepository.save(project);
+            return project.getTasks().get(project.getTasks().size()-1).getId();
         }
-
-        return 1L;
+        throw new NotFoundException();
     }
 
     public void update(final Long id, final TaskDTO taskDTO) {
@@ -82,28 +83,42 @@ public class TaskService {
         taskRepository.save(task);
     }
 
-    public void delete(final Long id) {
-        Task task = taskRepository.findById(id).get();
-        task.setParentTask(null);
-        task.setProject(null);
-        taskRepository.save(task);
-        taskRepository.deleteById(task.getId());
-        System.out.println("Deleted id: " + task.getId());
+    public void delete(final Long taskIdToDelete) {
+        //For ordering we need to find the parent id
+        Task taskToRemove = taskRepository.findById(taskIdToDelete).get();
+        Long parentTaskId = taskToRemove.getParentTask().getId();
+        Long projectId = taskToRemove.getProject().getId();
+        taskToRemove.setParentTask(null);
+        taskToRemove.setProject(null);
+        if (parentTaskId != null) {
+            Task parentTask = taskRepository.findById(parentTaskId).get();
+            parentTask.getTasks().remove(taskToRemove);
+            taskRepository.save(parentTask);
+        } else {
+            Project project = projectRepository.findById(projectId).get();
+            project.getTasks().remove(taskToRemove);
+            projectRepository.save(project);
+        }
+
+        taskRepository.delete(taskToRemove);
+
+        System.out.println("Deleted id: " + taskIdToDelete);
     }
 
     public TaskDTO mapToDTO(final Task task, final TaskDTO taskDTO) {
         taskDTO.setId(task.getId());
         taskDTO.setName(task.getName());
-      //  taskDTO.setCost(task.getComputedCost());
-      //  taskDTO.setTime(task.getComputedTime());
-        taskDTO.setCost(task.getCost() != null ? task.getCost() : new BigDecimal(0.0));
-        taskDTO.setTime(task.getTime() != null ? task.getTime() : new BigDecimal(0.0));
-        taskDTO.setDateCompleted(task.getDateCompleted());
-        taskDTO.setCompletedBy(task.getCompletedBy());
         taskDTO.setProject(task.getProject() == null ? null : task.getProject().getId());
         taskDTO.setParentTask(task.getParentTask() == null ? null : task.getParentTask().getId());
-        taskDTO.setTasks(task.getTasks().stream().map(t->mapToDTO(t,new TaskDTO())).collect(Collectors.toList()));
-        return taskDTO;
+        if (task.getTasks() == null || task.getTasks().isEmpty()) {
+            taskDTO.setCost(task.getCost() != null ? task.getCost() : new BigDecimal(0.0));
+            taskDTO.setTime(task.getTime() != null ? task.getTime() : new BigDecimal(0.0));
+            taskDTO.setDateCompleted(task.getDateCompleted());
+            taskDTO.setCompletedBy(task.getCompletedBy());
+        } else {
+            taskDTO.setTasks(task.getTasks().stream().map(t->mapToDTO(t,new TaskDTO())).collect(Collectors.toList()));
+        }
+         return taskDTO;
     }
 
     private Task mapToEntity(final TaskDTO taskDTO, final Task task) {
@@ -131,4 +146,14 @@ public class TaskService {
         return null;
     }
 
+    public void changeOrderOfTask(Long idOfTaskToMove, int indexToMoveTo) {
+        final Task taskToMove = taskRepository.findById(idOfTaskToMove)
+                .orElseThrow(NotFoundException::new);
+        Long parentID = taskToMove.getParentTask().getId();
+        final Task parentTask = taskRepository.findById(parentID).get();
+
+        parentTask.getTasks().remove(taskToMove);
+        parentTask.getTasks().add(indexToMoveTo, taskToMove);
+        taskRepository.save(parentTask);
+    }
 }
